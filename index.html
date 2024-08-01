@@ -19,7 +19,7 @@
         .notepad-container {
             width: 80%;
             max-width: 800px;
-            height: 70vh;
+            height: 60vh;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border: 1px solid #ccc;
@@ -49,12 +49,12 @@
             box-sizing: border-box;
         }
 
-        .font-selector-container {
+        .font-selector-container, .file-controls {
             margin-top: 20px;
             text-align: center;
         }
 
-        .font-selector {
+        .font-selector, .file-controls button, .file-controls input {
             padding: 10px;
             font-size: 16px;
             border-radius: 5px;
@@ -64,6 +64,16 @@
 
         .font-selector option:hover {
             background-color: #f0f0f0;
+        }
+
+        .file-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .file-controls button {
+            margin: 10px;
         }
     </style>
 </head>
@@ -85,9 +95,18 @@
         </select>
     </div>
 
+    <div class="file-controls">
+        <button id="download-btn">Download .TXT</button>
+        <input type="file" id="upload-file" accept=".txt" />
+        <button id="upload-btn">Upload .TXT</button>
+    </div>
+
     <script>
         const notepad = document.getElementById('notepad');
         const fontSelector = document.getElementById('font-selector');
+        const downloadBtn = document.getElementById('download-btn');
+        const uploadFile = document.getElementById('upload-file');
+        const uploadBtn = document.getElementById('upload-btn');
 
         // Load saved notes and font from localStorage
         notepad.value = localStorage.getItem('notepadContent') || '';
@@ -111,6 +130,38 @@
         setInterval(() => {
             localStorage.setItem('notepadContent', notepad.value);
         }, 5000);
+
+        // Download notes as a .txt file
+        downloadBtn.addEventListener('click', () => {
+            const blob = new Blob([notepad.value], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'notes.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Upload notes from a .txt file
+        uploadBtn.addEventListener('click', () => {
+            uploadFile.click();
+        });
+
+        uploadFile.addEventListener('change', () => {
+            const file = uploadFile.files[0];
+            if (file && file.type === 'text/plain') {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    notepad.value = e.target.result;
+                    localStorage.setItem('notepadContent', notepad.value);
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Please upload a .txt file');
+            }
+        });
     </script>
 </body>
 </html>
