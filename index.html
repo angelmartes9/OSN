@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notepad</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .notepad-container {
+            width: 80%;
+            max-width: 800px;
+            height: 70vh;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .notepad {
+            flex-grow: 1;
+            resize: none;
+            font-size: 16px;
+            line-height: 1.5;
+            width: 100%;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            box-sizing: border-box;
+        }
+
+        .font-selector-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .font-selector {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .font-selector option:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="notepad-container">
+        <h1>My Notepad</h1>
+        <textarea class="notepad" id="notepad"></textarea>
+    </div>
+
+    <div class="font-selector-container">
+        <label for="font-selector">Choose a font:</label>
+        <select id="font-selector" class="font-selector">
+            <option value="Courier New">Courier New</option>
+            <option value="Arial">Arial</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Comic Sans MS">Comic Sans MS</option>
+        </select>
+    </div>
+
+    <script>
+        const notepad = document.getElementById('notepad');
+        const fontSelector = document.getElementById('font-selector');
+
+        // Load saved notes and font from localStorage
+        notepad.value = localStorage.getItem('notepadContent') || '';
+        const savedFont = localStorage.getItem('notepadFont') || 'Courier New';
+        notepad.style.fontFamily = savedFont;
+        fontSelector.value = savedFont;
+
+        // Save notes to localStorage every time the user types
+        notepad.addEventListener('input', () => {
+            localStorage.setItem('notepadContent', notepad.value);
+        });
+
+        // Change font when a new font is selected and save it
+        fontSelector.addEventListener('change', () => {
+            const selectedFont = fontSelector.value;
+            notepad.style.fontFamily = selectedFont;
+            localStorage.setItem('notepadFont', selectedFont);
+        });
+
+        // Optional: Auto-save every 5 seconds
+        setInterval(() => {
+            localStorage.setItem('notepadContent', notepad.value);
+        }, 5000);
+    </script>
+</body>
+</html>
